@@ -1,5 +1,7 @@
-import { Box,Grid ,styled, Typography,Button} from '@mui/material'
+import { Box,Grid ,styled, Typography,Button, IconButton} from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useState ,type Dispatch,type SetStateAction} from 'react';
+import TaskModal from './TaskModal';
 const Card=styled(Box)({
     padding:'30px',
     border:'1px solid #ECECEC',
@@ -14,16 +16,20 @@ type task={
   description:string,
   status:string,
 }
-const DisplayTodo = (props:{data:task[]}) => {
-  return (
+const DisplayTodo = (props:{data:task[],deleteItem:(id:number)=>void,setTask:Dispatch<SetStateAction<task[]>>}) => {
+    const[open,setModal]=useState(false)
+    const[editId,setId]=useState<number>(0)
+      return (
 <Grid container spacing={2} sx={{marginTop:'50px'}}>
-
-    {props.data.length!==0&&props.data.map(item=>(
+{open&&<TaskModal task={props.data} open={open} handleClose={()=>setModal(false)} id={editId} setTask={props.setTask}/>}
+    {props.data.length!==0&&props.data.map((item,index)=>(
 <Grid  size={{lg:3,sm:6,xs:12}} >
     <Card>
         <Box sx={{width:'100%',display:'flex',justifyContent:'space-between'}}>
             <Typography style={{fontSize:'18px',fontWeight:700,color:'black'}}>Task Title :{item.task}</Typography>
-            <DeleteIcon color='error'/>
+            <IconButton onClick={()=>props.deleteItem(index)}>
+                 <DeleteIcon color='error'/>
+            </IconButton>
         </Box>
         <hr style={{width:'100%',border:'1px solid black'}}/>
         <Box>
@@ -32,7 +38,7 @@ const DisplayTodo = (props:{data:task[]}) => {
         </Box>
         <Box sx={{width:'100%',display:'flex',justifyContent:'space-between'}}>
             <Button sx={{
-                width:'200px',
+                width:'150px',
                 height:'50px',
                 color:'lightblue',
                 backgroundColor:'purple',
@@ -40,6 +46,17 @@ const DisplayTodo = (props:{data:task[]}) => {
 
             }}>
                   {item.status==='Active'?"Mark As Completed":"Completed"}
+            </Button>
+            <Button sx={{
+                width:'100px',
+                color:'darkgreen',
+                backgroundColor:'lightgreen',
+                textTransform:'capitalize',
+                height:'50px'
+            }} 
+            onClick={()=>{{setId(index);setModal(true)}}}
+            >
+                    Edit Task
             </Button>
         </Box>
     </Card>

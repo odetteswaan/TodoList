@@ -23,20 +23,23 @@ type task={
   description:string,
   status:string,
 }
-
 const App=()=>{
   const[taskArray,setTask]=useState<task[]>([])
   const[open,setModal]=useState(false)
+  const DeleteItem=(index:number)=>{
+         const newArray=taskArray.filter((_,i)=>i!==index)
+         setTask(newArray)
+  }
   return(
     <>
   <Container>
-    {open&&<TaskModal open={open} handleClose={()=>setModal(false)} task={taskArray} setTask={setTask}/>}
+    {open&&<TaskModal open={open} handleClose={()=>setModal(false)} task={taskArray} setTask={setTask} />}
     <CustomBtn 
     onClick={()=>setModal(true)} endIcon={<AddCircleOutlineIcon/>}>
         Add Todo
     </CustomBtn>
   </Container>
-    <DisplayTodo data={taskArray}/>
+    <DisplayTodo data={taskArray} deleteItem={DeleteItem} setTask={setTask}/>
     </>
   )
 }
