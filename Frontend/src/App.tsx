@@ -1,33 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Box,styled ,Button} from "@mui/material"
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import DisplayTodo from "./DisplayTodo";
+import { useState } from "react";
+import TaskModal from "./TaskModal";
+const Container=styled(Box)({
+  width:'100%',
+  display:'flex',
+  justifyContent:'center'
+})
+const CustomBtn=styled(Button)({
+  height:'40px',
+  width:'150px',
+  backgroundColor:'lightgreen',
+  textTransform:'capitalize',
+  borderRadius:'5px',
+  fontSize:'16px',
+  fontWeight:700,
+  color:'green',
+})
+type task={
+  task:string;
+  description:string,
+  status:string,
+}
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
+const App=()=>{
+  const[taskArray,setTask]=useState<task[]>([])
+  const[open,setModal]=useState(false)
+  return(
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+  <Container>
+    {open&&<TaskModal open={open} handleClose={()=>setModal(false)} task={taskArray} setTask={setTask}/>}
+    <CustomBtn 
+    onClick={()=>setModal(true)} endIcon={<AddCircleOutlineIcon/>}>
+        Add Todo
+    </CustomBtn>
+  </Container>
+    <DisplayTodo data={taskArray}/>
     </>
   )
 }
