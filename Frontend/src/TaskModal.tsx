@@ -6,29 +6,36 @@ import {
   styled,
   Button,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import axios from "axios";
-import { baseUrl, postTask } from "./config";
+import { baseUrl, editTask, getTaskById, postTask } from "./config";
 type task = {
-  task: string;
-  description: string;
-  status: string;
+  _id:string;
+    status: string;
+    taskDescription: string;
+    taskTitle: string;
 };
 const style = {
+};
+const ModalContainer=styled(Box)(({theme})=>({
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
+  width: '400px',
+  backgroundColor: "#fff",
+  padding: '30px',
   borderRadius: "20px",
-};
+  [theme.breakpoints.down('sm')]:{
+    width:'300px'
+  }
+
+}))
 const TodoSchema = Yup.object().shape({
   title: Yup.string()
     .min(3, "Too short!")
@@ -58,16 +65,28 @@ const TaskModal = (props: {
   handleClose: () => void;
   task: task[];
   setTask: Dispatch<SetStateAction<task[]>>;
-  id?: number;
+  id?: string;
 }) => {
   const [item, setItem] = useState<task>();
+  const[isloading,setLoading]=useState(true)
   useEffect(() => {
     console.log(props.id);
-    if (props.id || props.id === 0) {
-      console.log(props.task[props.id]);
-      setItem(props.task[props.id]);
+    if (props.id) {
+       axios.get(`${baseUrl}${getTaskById(props.id)}`).then(res=>{
+        setItem(res.data)
+        setLoading(false)
+       }).catch(err=>console.log(err))
+    }
+    else{
+      setLoading(false)
     }
   }, []);
+  if(isloading){
+    return <Box sx={{position:'absolute',zIndex:10,top:'50%',left:'50%'
+    }}>
+      <CircularProgress/>
+    </Box>
+  }
   return (
     <Modal
       open={props.open}
@@ -75,7 +94,7 @@ const TaskModal = (props: {
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <Box sx={style}>
+      <ModalContainer sx={style}>
         <Box
           sx={{ width: "100%", display: "flex", justifyContent: "flex-end" }}
         >
@@ -90,25 +109,26 @@ const TaskModal = (props: {
         </Typography>
         <Formik
           initialValues={{
-            title: item?.task || "",
-            description: item?.description || "",
+            title: item?.taskTitle || "",
+            description: item?.taskDescription || "",
           }}
           validationSchema={TodoSchema}
           onSubmit={(values) => {
             const newTask = {
-              task: values.title,
-              description: values.description,
+              taskTitle: values.title,
+              taskDescription: values.description,
               status: "Active",
             };
-            if (props.id || props.id === 0) {
-              const taskData = props.task;
-              taskData[props.id] = newTask;
-              props.setTask([...taskData]);
-              props.handleClose();
+            if (props.id) {
+              axios.put(`${baseUrl}${editTask(props.id)}`,newTask).then(()=>{
+                window.location.reload()
+              }).catch((err)=>{
+               console.log(err)
+              })
             } else {
               const body={
-                taskTitle: "Task1",
-               taskDescription: "Make Footer Feature",
+                taskTitle: values.title,
+               taskDescription: values.description,
                status: "Active",
               }
              axios.post(`${baseUrl}${postTask}`,body).then(()=>{
@@ -161,7 +181,7 @@ const TaskModal = (props: {
             </Form>
           )}
         </Formik>
-      </Box>
+      </ModalContainer>
     </Modal>
   );
 };

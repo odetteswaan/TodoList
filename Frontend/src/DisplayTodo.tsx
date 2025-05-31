@@ -11,12 +11,13 @@ const Card=styled(Box)({
     flexDirection:'column',
     borderRadius:'15px',
    justifyContent:'space-between',
-    height:'100%'
+    height:'200px'
 })
 type task={
-  task:string;
-  description:string,
-  status:string,
+  _id:string;
+    status: string;
+    taskDescription: string;
+    taskTitle: string;
 }
 type ResponseData={
     _id:string;
@@ -26,7 +27,7 @@ type ResponseData={
 }
 const DisplayTodo = (props:{data:task[],deleteItem:(id:number)=>void,setTask:Dispatch<SetStateAction<task[]>>}) => {
     const[open,setModal]=useState(false)
-    const[editId,setId]=useState<number>(0)
+    const[editId,setId]=useState<string>('')
     const[data,setData]=useState<ResponseData[]|null>(null)
     const[loading,setLoading]=useState(true)
     useEffect(()=>{
@@ -52,7 +53,7 @@ const DisplayTodo = (props:{data:task[],deleteItem:(id:number)=>void,setTask:Dis
       return (
 <Grid container spacing={2} sx={{marginTop:'50px'}}>
 {open&&<TaskModal task={props.data} open={open} handleClose={()=>setModal(false)} id={editId} setTask={props.setTask}/>}
-    {data?.length!==0&&data?.map((item,index)=>(
+    {data?.length!==0&&data?.map((item)=>(
 <Grid  size={{lg:3,sm:6,xs:12}} >
     <Card>
         <Box sx={{width:'100%',display:'flex',justifyContent:'space-between'}}>
@@ -84,7 +85,7 @@ const DisplayTodo = (props:{data:task[],deleteItem:(id:number)=>void,setTask:Dis
                 textTransform:'capitalize',
                 height:'50px'
             }} 
-            onClick={()=>{{setId(index);setModal(true)}}}
+            onClick={()=>{{setId(item._id);setModal(true)}}}
             >
                     Edit Task
             </Button>
