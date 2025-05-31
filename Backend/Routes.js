@@ -24,5 +24,9 @@ Router.put('/task/:id',async(req,res)=>{
 const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
   res.json(updatedTask);
 })
+Router.get('/task/:id',async(req,res)=>{
+  const task=await Task.findById(req.params.id)
+  res.json(task)
+})
 
 module.exports=Router

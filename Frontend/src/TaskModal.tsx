@@ -11,6 +11,8 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import axios from "axios";
+import { baseUrl, postTask } from "./config";
 type task = {
   task: string;
   description: string;
@@ -104,8 +106,14 @@ const TaskModal = (props: {
               props.setTask([...taskData]);
               props.handleClose();
             } else {
-              props.setTask([...props.task, newTask]);
-              props.handleClose();
+              const body={
+                taskTitle: "Task1",
+               taskDescription: "Make Footer Feature",
+               status: "Active",
+              }
+             axios.post(`${baseUrl}${postTask}`,body).then(()=>{
+              window.location.reload()
+             }).catch(err=>console.log(err))
             }
           }}
         >
