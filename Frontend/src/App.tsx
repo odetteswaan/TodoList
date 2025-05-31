@@ -19,9 +19,10 @@ const CustomBtn=styled(Button)({
   color:'green',
 })
 type task={
-  task:string;
-  description:string,
-  status:string,
+_id:string;
+    status: string;
+    taskDescription: string;
+    taskTitle: string;
 }
 const App=()=>{
   const[taskArray,setTask]=useState<task[]>([])
