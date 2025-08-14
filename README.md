@@ -1,4 +1,4 @@
-
+## As API's are slow it may take 1-2 min to display todo list
 #  Frontend (React): 
 User interface to create, read, update, and
 delete (CRUD) to-do items. Makes HTTP requests (using fetch or
